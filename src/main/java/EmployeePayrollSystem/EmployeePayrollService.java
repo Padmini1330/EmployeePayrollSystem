@@ -65,21 +65,29 @@ public class EmployeePayrollService
         }
         return 0;
     }
-    public long readEmployeePayrollData(IOService ioservice) 
+    public List<Employee> readEmployeePayrollData(IOService ioservice, String... name) 
     {
-        if(ioservice.equals(IOService.FILE_IO))
-            this.employeeList =new EmployeePayrollFileIOService().readData();
-        else if(ioservice.equals(IOService.DB_IO))
-            this.employeeList=new EmployeePayrollFileIOService().readDataFromDB();
-        return employeeList.size();
+        if (ioservice.equals(IOService.FILE_IO))
+            this.employeeList = new EmployeePayrollFileIOService().readData();
+        else if (ioservice.equals(IOService.DB_IO))
+            this.employeeList = DatabaseService.getDBServiceInstance().readEmployeeDataFromDB(name[0]);
+        return employeeList;
     }
-	public Payroll updatePayroll()
-	{
-	        Payroll payroll = new EmployeePayrollFileIOService().updatePayroll();
-	        return payroll;
-	}
-	
-    public static void main(String[] args) 
+
+    public void updatePayroll(String name, String basicPay) 
+    {
+        DatabaseService.getDBServiceInstance().employeeList.get(0).getPayroll().setBasicPay(basicPay);
+        DatabaseService.getDBServiceInstance().updatePayroll(name, basicPay);
+    }
+
+
+    public boolean compareUpdate(String name)
+    {
+        List<Employee> employeeList = DatabaseService.getDBServiceInstance().employeeList;
+        return employeeList.get(0).getPayroll().toString().equals(readEmployeePayrollData(IOService.DB_IO, name).get(0).getPayroll().toString());
+    }
+    
+    public static void main(String[] args)
     {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         Scanner consoleInputReader = new Scanner(System.in);
@@ -88,5 +96,7 @@ public class EmployeePayrollService
         employeePayrollService.writeEmployeePayrollData(IOService.CONSOLE_IO);
         employeePayrollService.writeEmployeePayrollData(IOService.FILE_IO);
         employeePayrollService.readEmployeePayrollData(IOService.FILE_IO);
+
     }
+
 }
