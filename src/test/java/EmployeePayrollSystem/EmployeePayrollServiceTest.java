@@ -6,6 +6,7 @@ import org.junit.Test;
 
 
 import java.util.Arrays;
+import java.util.List;
 
 public class EmployeePayrollServiceTest 
 {
@@ -17,32 +18,32 @@ public class EmployeePayrollServiceTest
 		employeePayrollService = new EmployeePayrollService();
 	}
 	
-    @Test
-    public void givenFilesOnReading_ShouldMatchEmployeeCount() 
-    {
-        long entries = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.FILE_IO);
-    }
 
-    @Test
-    public void whenReadFromEmployeePayroll_ShouldReturnProperRecordSize() 
-    {
-        long size = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-        Assert.assertEquals(3, size);
-    }
-    
-    @Test
-    public void WhenEmployeePayroll_isUpdated_ShouldReturnProperValues() 
-    {
-        try 
-        {
-            Payroll actualPayroll = employeePayrollService.updatePayroll();
-            Payroll expectedPayroll = new Payroll(1, "3000000","3000","1000" ,"500" ,"25000");
-            Assert.assertEquals(expectedPayroll.toString(), actualPayroll.toString());
-        } 
-        catch (DatabaseException e) 
-        {
-            e.printStackTrace();
-        }
-    }
+	    @Test
+	    public void givenFilesOnReadingFromFilesShouldMatchEmployeeCount() 
+	    {
+	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+	        long entries = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.FILE_IO).size();
+	    }
+
+	    @Test
+	    public void readFromEmployeePayroll_readGivenEmployee() 
+	    {
+	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+	        long size = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO, "Jim").size();
+	        Assert.assertEquals(1, size);
+	    }
+
+	    @Test
+	    public void whenBasicPay_IsUpdated_ReturnsCorrectValues() 
+	    {
+	        String name = "Jim";
+	        String basicPay = "300";
+	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+	        List<Employee> employeeList = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO, name);
+	        employeePayrollService.updatePayroll(name, basicPay);
+	        boolean result = employeePayrollService.compareUpdate(name);
+	        Assert.assertTrue(result);
+	    }
 
 }
