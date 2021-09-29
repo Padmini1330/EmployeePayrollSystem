@@ -57,5 +57,37 @@ public class EmployeePayrollServiceTest
 	        System.out.println(employeeList.size());
 	        Assert.assertEquals(3, employeeList.size());
 	    }
+	    
+	    @Test
+	    public void givenMathFunctionSum_WhenCorrect_RetrieveTheResult() 
+	    {
+	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+	        Double result=employeePayrollService.getMathValueForGivenMathFunction("sum","F");
+	        System.out.println(result);
+	    }
+	    
+	    @Test
+	    public void givenMathFunctionMin_WhenCorrect_RetrieveTheResult() 
+	    {
+	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+	        Double result=employeePayrollService.getMathValueForGivenMathFunction("min","M");
+	        System.out.println(result);
+	    }
+	    
+	    @Test
+	    public void givenMathFunctionMax_WhenCorrect_RetrieveTheResult() 
+	    {
+	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+	        Double result=employeePayrollService.getMathValueForGivenMathFunction("max","F");
+	        System.out.println(result);
+	    }
+	    
+	    @Test
+	    public void givenMathFunctionAvg_WhenCorrect_RetrieveTheResult() 
+	    {
+	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+	        Double result=employeePayrollService.getMathValueForGivenMathFunction("avg","M");
+	        System.out.println(result);
+	    }
 
 }
