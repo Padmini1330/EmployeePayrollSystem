@@ -1,6 +1,7 @@
 package EmployeePayrollSystem;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class Employee 
 {
@@ -14,7 +15,16 @@ public class Employee
 	public LocalDate startDate;
     private Payroll payroll;
     private Company company;
+    
+    public List<Department> getDepartmentList() {
+        return departmentList;
+    }
 
+    public void setDepartmentList(List<Department> departmentList) {
+        this.departmentList = departmentList;
+    }
+
+    private List<Department> departmentList;
     
     public int getEmployeeID()
     {
