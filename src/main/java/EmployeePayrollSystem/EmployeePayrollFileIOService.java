@@ -38,13 +38,13 @@ public class EmployeePayrollFileIOService
         {
             Files.lines(new File(PAYROLL_FILE_NAME).toPath()).forEach(System.out::println);
         } 
-        catch (IOException e) 
+        catch (IOException e)
         {
             e.printStackTrace();
         }
     }
 
-    public long countEntries() 
+    public long countEntries()
     {
         long entries = 0;
         try 
@@ -61,65 +61,16 @@ public class EmployeePayrollFileIOService
     public List<Employee> readData() 
     {
         List<Employee> employeeList = new ArrayList<Employee>();
-        try 
+        try
         {
             Files.lines(new File(PAYROLL_FILE_NAME).toPath())
                     .map(line -> line.trim())
                     .forEach(line -> System.out.println(line));
         } 
-        catch (IOException e) 
+        catch (IOException e)
         {
             e.printStackTrace();
         }
         return employeeList;
-    }
-    
-    public Payroll updatePayroll()
-    {
-        Payroll updatedpayroll;
-        String query="select * from Employee e,Payroll p where p.employeeID=e.employeeID and e.employeeName=\"Jim\"";
-        
-        String updateQuery="update Payroll set basicPay=3000000 where employeeID in (select employeeID from Employee where employeeName=\"Jim\")";
-        try 
-        {
-            Connection connection=DatabaseService.getConnection();
-            System.out.println("connected");
-            Statement statement=connection.createStatement();
-            statement.executeUpdate(updateQuery);
-            ResultSet resultSet=statement.executeQuery(query);
-            resultSet.next();
-                updatedpayroll =new Payroll(resultSet.getInt("employeeID"), resultSet.getString("basicPay"), resultSet.getString("deduction"), resultSet.getString("taxablePay"), resultSet.getString("incomeTax"), resultSet.getString("netPay"));
-            System.out.println(updatedpayroll);
-        }
-        catch (Exception e) 
-        {
-            throw new DatabaseException(e.getMessage());
-        }
-        return updatedpayroll;
-    }
-
-    public List<Employee> readDataFromDB() 
-    {
-        List<Employee> employeeList = new ArrayList<Employee>();
-        String query="select * from Employee e,Payroll p where p.employeeID=e.employeeID";
-        try 
-        {
-        	System.out.println("Worked");            
-        	Connection connection=DatabaseService.getConnection();
-            System.out.println("connected");
-            Statement statement=connection.createStatement();
-            ResultSet resultSet=statement.executeQuery(query);
-           
-            while(resultSet.next()) 
-            {
-                employeeList.add(new Employee(resultSet.getInt("employeeID"),resultSet.getInt("departmentID"),resultSet.getInt("companyID"), resultSet.getString("employeeName"), resultSet.getString("gender"), resultSet.getString("address"), resultSet.getString("phoneNumber"), resultSet.getString("startDate")));
-            }
-            System.out.println(employeeList);
-        }
-        catch (Exception e) 
-        {
-            e.printStackTrace();
-        }
-        return  employeeList;
     }
 }
