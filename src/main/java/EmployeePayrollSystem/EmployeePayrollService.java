@@ -81,7 +81,7 @@ public class EmployeePayrollService
         return employeeList;
     }
 
-    public void updatePayroll(String name, String basicPay) 
+    public void updatePayroll(String name, int basicPay) 
     {
         DatabaseService.getDBServiceInstance().employeeList.get(0).getPayroll().setBasicPay(basicPay);
         DatabaseService.getDBServiceInstance().updatePayroll(name, basicPay);
@@ -100,10 +100,27 @@ public class EmployeePayrollService
         return employeeList.get(0).getPayroll().toString().equals(readEmployeePayrollData(IOService.DB_IO, name).get(0).getPayroll().toString());
     }
     
-    public double getMathValueForGivenMathFunction(String function,String gender)
+    public int getMathValueForGivenMathFunction(String function,String gender)
     {
-        return DatabaseService.getDBServiceInstance().getMathValueForGivenMathFunction(function,gender);
+        return (int) DatabaseService.getDBServiceInstance().getMathValueForGivenMathFunction(function,gender);
     }
+    
+    public Payroll insertEmployeePayrollValues(Employee employee, int basicSalary) 
+    {
+        int deduction=(basicSalary/5);
+        int taxabalePay=basicSalary-deduction;
+        int incomeTax=taxabalePay/10;
+        int netPay=basicSalary-incomeTax;
+        Payroll payroll=new Payroll(employee.employeeID,basicSalary,deduction,taxabalePay,incomeTax,netPay);
+        return DatabaseService.getDBServiceInstance().insertEmployeePayrollValues(employee,payroll);
+    }
+
+    public boolean compareEmployeePayrollInsertSync(String name,Payroll payroll) 
+    {
+    	return payroll.toString().equals(readEmployeePayrollData(IOService.DB_IO,name).get(0).getPayroll().toString());
+    }
+    
+    
     public static void main(String[] args) 
     {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
