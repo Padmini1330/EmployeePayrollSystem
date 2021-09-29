@@ -39,7 +39,7 @@ public class EmployeePayrollServiceTest
 	    public void whenBasicPay_IsUpdated_ReturnsCorrectValues() 
 	    {
 	        String name = "Jim";
-	        String basicPay = "3000";
+	        int basicPay = 3000;
 	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 	        List<Employee> employeeList = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO, name);
 	        employeePayrollService.updatePayroll(name, basicPay);
@@ -62,7 +62,7 @@ public class EmployeePayrollServiceTest
 	    public void givenMathFunctionSum_WhenCorrect_RetrieveTheResult() 
 	    {
 	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-	        Double result=employeePayrollService.getMathValueForGivenMathFunction("sum","F");
+	        int result=employeePayrollService.getMathValueForGivenMathFunction("sum","F");
 	        System.out.println(result);
 	    }
 	    
@@ -70,7 +70,7 @@ public class EmployeePayrollServiceTest
 	    public void givenMathFunctionMin_WhenCorrect_RetrieveTheResult() 
 	    {
 	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-	        Double result=employeePayrollService.getMathValueForGivenMathFunction("min","M");
+	        int result=employeePayrollService.getMathValueForGivenMathFunction("min","M");
 	        System.out.println(result);
 	    }
 	    
@@ -78,7 +78,7 @@ public class EmployeePayrollServiceTest
 	    public void givenMathFunctionMax_WhenCorrect_RetrieveTheResult() 
 	    {
 	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-	        Double result=employeePayrollService.getMathValueForGivenMathFunction("max","F");
+	        int result=employeePayrollService.getMathValueForGivenMathFunction("max","F");
 	        System.out.println(result);
 	    }
 	    
@@ -86,8 +86,17 @@ public class EmployeePayrollServiceTest
 	    public void givenMathFunctionAvg_WhenCorrect_RetrieveTheResult() 
 	    {
 	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-	        Double result=employeePayrollService.getMathValueForGivenMathFunction("avg","M");
+	        int result=employeePayrollService.getMathValueForGivenMathFunction("avg","M");
 	        System.out.println(result);
+	    }
+	    
+	    @Test
+	    public void givenNewEmployeePayrollData_WhenCorrect_InsertToEMployeeAndPayrollTable(){
+	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+	        Employee employee=new Employee(4,100,500,"padmini","F","Bangalore","9898989",LocalDate.of(2021,3,13));
+	        Payroll updatedPayroll=employeePayrollService.insertEmployeePayrollValues(employee,20000);
+	        boolean result = employeePayrollService.compareEmployeePayrollInsertSync(employee.getEmployeeName(),updatedPayroll);
+	        Assert.assertTrue(result);
 	    }
 
 }
