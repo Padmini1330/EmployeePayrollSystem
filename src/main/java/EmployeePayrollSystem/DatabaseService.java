@@ -243,18 +243,20 @@ public class DatabaseService
         }
     }
     
+   
     public Payroll insertEmployeePayrollValues(Employee employee, Payroll payroll) 
     {
         Payroll updatedPayroll;
         String insertEmployee = String.format("insert into Employee values('%s','%s','%s','%s','%s','%s','%s')", employee.getEmployeeID(), employee.getDepartmentID(), employee.getCompanyID(), employee.getEmployeeName(), employee.getGender(), employee.getAddress(), employee.getPhoneNumber(), Date.valueOf(employee.getStartDate()));
         String insertPayroll = String.format("insert into Payroll values('%s','%s','%s','%s','%s','%s')", payroll.getEmployeeID(), payroll.getBasicPay(), payroll.getDeduction(), payroll.getTaxablePay(), payroll.getIncomeTax(), payroll.getNetPay());
+        String insertDepartment=String.format("insert into Department values('%s','%s')",employee.getDepartmentID(),employee.getDepartmentList().get(0).department);
         Connection connection;
         try 
         {
             connection = this.getConnection();
             connection.setAutoCommit(false);
         } 
-        catch (Exception e)
+        catch (Exception e) 
         {
             throw new DatabaseException(e.getMessage());
         }
@@ -262,7 +264,19 @@ public class DatabaseService
         {
             statement.executeUpdate(insertEmployee);
         } 
-        catch (Exception e)
+        catch (Exception e) 
+        {
+            try {
+                connection.rollback();
+            } catch (Exception exec) {
+                throw new DatabaseException(exec.getMessage());
+            }
+            throw new DatabaseException(e.getMessage());
+        }
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(insertPayroll);
+        }
+        catch (Exception e) 
         {
             try 
             {
@@ -274,19 +288,19 @@ public class DatabaseService
             }
             throw new DatabaseException(e.getMessage());
         }
-        try (Statement statement = connection.createStatement()) 
+        try(Statement statement=connection.createStatement())
         {
-            statement.executeUpdate(insertPayroll);
+            statement.executeUpdate(insertDepartment);
             connection.commit();
             updatedPayroll = payroll;
         } 
-        catch (Exception e)
+        catch (Exception e) 
         {
             try 
             {
                 connection.rollback();
             } 
-            catch (Exception exec) 
+            catch (Exception exec)
             {
                 throw new DatabaseException(exec.getMessage());
             }
