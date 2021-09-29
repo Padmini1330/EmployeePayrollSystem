@@ -100,6 +100,10 @@ public class EmployeePayrollService
         return employeeList.get(0).getPayroll().toString().equals(readEmployeePayrollData(IOService.DB_IO, name).get(0).getPayroll().toString());
     }
     
+    public double getMathValueForGivenMathFunction(String function,String gender)
+    {
+        return DatabaseService.getDBServiceInstance().getMathValueForGivenMathFunction(function,gender);
+    }
     public static void main(String[] args) 
     {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
