@@ -125,7 +125,7 @@ public class DatabaseService
     {
         try (Connection connection = this.getConnection()) 
         {
-            String query = "select * from Employee e, Payroll p,Company c where e.employeeID=p.employeeID and e.companyID=c.companyID and employeeName= ?";
+            String query = "select * from Employee e, Payroll p,Company c where e.employeeID=p.employeeID and e.companyID=c.companyID and is_active= true and employeeName= ?";
             preparedStatement = connection.prepareStatement(query);
         } 
         catch (Exception e)
@@ -307,6 +307,21 @@ public class DatabaseService
             throw new DatabaseException(e.getMessage());
         }
         return updatedPayroll;
+    }
+    
+    public boolean deleteEmployee(String name) 
+    {
+        String query = String.format("UPDATE Employee SET IsActive=false where employeeName='%s'", name);
+        try (Connection connection = this.getConnection()) 
+        {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(query);
+        } 
+        catch (Exception e) 
+        {
+            throw new DatabaseException(e.getMessage());
+        }
+        return false;
     }
     
 }   
