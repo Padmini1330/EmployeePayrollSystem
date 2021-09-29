@@ -22,14 +22,12 @@ public class EmployeePayrollServiceTest
 	    @Test
 	    public void givenFilesOnReadingFromFilesShouldMatchEmployeeCount() 
 	    {
-	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 	        long entries = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.FILE_IO).size();
 	    }
 
 	    @Test
 	    public void readFromEmployeePayroll_readGivenEmployee() 
 	    {
-	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 	        long size = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO, "Ross").size();
 	        System.out.println(size);
 	        Assert.assertEquals(1, size);
@@ -40,7 +38,6 @@ public class EmployeePayrollServiceTest
 	    {
 	        String name = "Jim";
 	        int basicPay = 3000;
-	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 	        List<Employee> employeeList = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO, name);
 	        employeePayrollService.updatePayroll(name, basicPay);
 	        boolean result = employeePayrollService.compareUpdateSync(name);
@@ -50,7 +47,6 @@ public class EmployeePayrollServiceTest
 	    @Test
 	    public void givenDateRange_WhenCorrect_RetrieveEmployeesWhoJoinedInTheGivenRange() 
 	    {
-	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 	        LocalDate startDate = LocalDate.of(2021, 4, 19);
 	        LocalDate endDate = LocalDate.of(2021, 12, 19);
 	        List<Employee> employeeList = employeePayrollService.readEmployeeJoinedInRange(startDate, endDate);
@@ -61,7 +57,6 @@ public class EmployeePayrollServiceTest
 	    @Test
 	    public void givenMathFunctionSum_WhenCorrect_RetrieveTheResult() 
 	    {
-	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 	        int result=employeePayrollService.getMathValueForGivenMathFunction("sum","F");
 	        System.out.println(result);
 	    }
@@ -69,7 +64,6 @@ public class EmployeePayrollServiceTest
 	    @Test
 	    public void givenMathFunctionMin_WhenCorrect_RetrieveTheResult() 
 	    {
-	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 	        int result=employeePayrollService.getMathValueForGivenMathFunction("min","M");
 	        System.out.println(result);
 	    }
@@ -77,7 +71,6 @@ public class EmployeePayrollServiceTest
 	    @Test
 	    public void givenMathFunctionMax_WhenCorrect_RetrieveTheResult() 
 	    {
-	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 	        int result=employeePayrollService.getMathValueForGivenMathFunction("max","F");
 	        System.out.println(result);
 	    }
@@ -85,7 +78,6 @@ public class EmployeePayrollServiceTest
 	    @Test
 	    public void givenMathFunctionAvg_WhenCorrect_RetrieveTheResult() 
 	    {
-	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 	        int result=employeePayrollService.getMathValueForGivenMathFunction("avg","M");
 	        System.out.println(result);
 	    }
@@ -93,7 +85,6 @@ public class EmployeePayrollServiceTest
 	    @Test
 	    public void givenNewEmployeePayrollData_WhenCorrect_InsertToEmployeeAndPayrollTable()
 	    {
-	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 	        Employee employee=new Employee(4,100,500,"padmini","F","Bangalore","9898989",LocalDate.of(2021,3,13));
 	        Payroll updatedPayroll=employeePayrollService.insertEmployeePayrollValues(employee,20000);
 	        boolean result = employeePayrollService.compareEmployeePayrollInsertSync(employee.getEmployeeName(),updatedPayroll);
@@ -104,13 +95,19 @@ public class EmployeePayrollServiceTest
 	    @Test
 	    public void givenNewEmployeePayrollData_WhenCorrect_InsertToEmployeeDepartmentAndPayrollTable()
 	    {
-	        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 	        Employee employee=new Employee(4,100,500,"padmini","F","Bangalore","9898989",LocalDate.of(2021,3,13));
 	        Department department = new Department(100,"engineer");
 	        employee.setDepartmentList(List.of(department));
 	        Payroll updatedPayroll=employeePayrollService.insertEmployeePayrollValues(employee,20000);
 	        boolean result = employeePayrollService.compareEmployeePayrollInsertSync(employee.getEmployeeName(),updatedPayroll);
 	        Assert.assertTrue(result);
+	    }
+	    
+	    @Test
+	    public void givenEmployeeName_WhenProper_DeleteEmployeeBySettingIsActiveToFalse() 
+	    {
+	        boolean result = employeePayrollService.deleteEmployee("Ross");
+	        Assert.assertFalse(result);
 	    }
 
 }
