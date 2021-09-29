@@ -112,7 +112,7 @@ public class EmployeePayrollService
         int incomeTax=taxabalePay/10;
         int netPay=basicSalary-incomeTax;
         Payroll payroll=new Payroll(employee.employeeID,basicSalary,deduction,taxabalePay,incomeTax,netPay);
-        return DatabaseService.getDBServiceInstance().insertEmployeePayrollValues(employee,payroll);
+        return DatabaseService.getDBServiceInstance().insertEmployeePayrollValues(employee,basicSalary);
     }
 
     public boolean compareEmployeePayrollInsertSync(String name,Payroll payroll) 
