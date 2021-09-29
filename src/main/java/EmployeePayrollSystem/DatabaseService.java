@@ -78,11 +78,11 @@ public class DatabaseService
                 		resultSet.getString("phoneNumber"), 
                 		resultSet.getDate("startDate").toLocalDate() ,
                 		new Payroll(resultSet.getInt("employeeID"), 
-                				resultSet.getString("basicPay"), 
-                				resultSet.getString("deduction"), 
-                				resultSet.getString("taxablePay"), 
-                				resultSet.getString("incomeTax"), 
-                				resultSet.getString("netPay")), 
+                				resultSet.getInt("basicPay"), 
+                				resultSet.getInt("deduction"), 
+                				resultSet.getInt("taxablePay"), 
+                				resultSet.getInt("incomeTax"), 
+                				resultSet.getInt("netPay")), 
                 				new Company(resultSet.getInt("companyID"), 
                 						resultSet.getString("companyName"))));
           
@@ -163,7 +163,7 @@ public class DatabaseService
         }
     }
 
-    public void updatePayroll(String name, String basicPay)
+    public void updatePayroll(String name, int basicPay)
     {
         if (updatePayrollStatement == null)
         {
@@ -171,7 +171,7 @@ public class DatabaseService
         }
         try
         {
-            updatePayrollStatement.setString(1, basicPay);
+            updatePayrollStatement.setInt(1, basicPay);
             updatePayrollStatement.setString(2, name);
             updatePayrollStatement.executeUpdate();
         } 
@@ -242,4 +242,58 @@ public class DatabaseService
             throw new DatabaseException(e.getMessage());
         }
     }
-}
+    
+    public Payroll insertEmployeePayrollValues(Employee employee, Payroll payroll) 
+    {
+        Payroll updatedPayroll;
+        String insertEmployee = String.format("insert into Employee values('%s','%s','%s','%s','%s','%s','%s')", employee.getEmployeeID(), employee.getDepartmentID(), employee.getCompanyID(), employee.getEmployeeName(), employee.getGender(), employee.getAddress(), employee.getPhoneNumber(), Date.valueOf(employee.getStartDate()));
+        String insertPayroll = String.format("insert into Payroll values('%s','%s','%s','%s','%s','%s')", payroll.getEmployeeID(), payroll.getBasicPay(), payroll.getDeduction(), payroll.getTaxablePay(), payroll.getIncomeTax(), payroll.getNetPay());
+        Connection connection;
+        try 
+        {
+            connection = this.getConnection();
+            connection.setAutoCommit(false);
+        } 
+        catch (Exception e)
+        {
+            throw new DatabaseException(e.getMessage());
+        }
+        try (Statement statement = connection.createStatement()) 
+        {
+            statement.executeUpdate(insertEmployee);
+        } 
+        catch (Exception e)
+        {
+            try 
+            {
+                connection.rollback();
+            } 
+            catch (Exception exec) 
+            {
+                throw new DatabaseException(exec.getMessage());
+            }
+            throw new DatabaseException(e.getMessage());
+        }
+        try (Statement statement = connection.createStatement()) 
+        {
+            statement.executeUpdate(insertPayroll);
+            connection.commit();
+            updatedPayroll = payroll;
+        } 
+        catch (Exception e)
+        {
+            try 
+            {
+                connection.rollback();
+            } 
+            catch (Exception exec) 
+            {
+                throw new DatabaseException(exec.getMessage());
+            }
+            throw new DatabaseException(e.getMessage());
+        }
+        return updatedPayroll;
+    }
+    
+}   
+
