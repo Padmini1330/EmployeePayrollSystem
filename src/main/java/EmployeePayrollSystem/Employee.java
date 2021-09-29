@@ -11,7 +11,7 @@ public class Employee
 	public String gender;
 	public String address;
 	public String phoneNumber;
-	public String startDate;
+	public LocalDate startDate;
     private Payroll payroll;
     private Company company;
 
@@ -26,7 +26,7 @@ public class Employee
         this.payroll = payroll;
     }
 
-    public Employee(int id, int deptID,int companyID,String name, String gender, String address, String phoneNumber, String startDate,Payroll payroll,Company company)
+    public Employee(int id, int deptID,int companyID,String name, String gender, String address, String phoneNumber, LocalDate startDate,Payroll payroll,Company company)
     {
         this.employeeID = id;
         this.departmentID = deptID;
@@ -42,7 +42,7 @@ public class Employee
     }
 
 	public Employee(int employeeID, int departmentID, int companyID, String employeeName, String gender, String address,
-			String phoneNumber, String startDate) {
+			String phoneNumber, LocalDate startDate) {
 		super();
 		this.employeeID = employeeID;
 		this.departmentID = departmentID;
@@ -53,6 +53,8 @@ public class Employee
 		this.phoneNumber = phoneNumber;
 		this.startDate = startDate;
 	}
+
+	
 
 	@Override
 	public String toString() {
