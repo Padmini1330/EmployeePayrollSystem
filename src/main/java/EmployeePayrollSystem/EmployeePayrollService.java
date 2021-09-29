@@ -120,6 +120,12 @@ public class EmployeePayrollService
     	return payroll.toString().equals(readEmployeePayrollData(IOService.DB_IO,name).get(0).getPayroll().toString());
     }
     
+
+    public boolean deleteEmployee(String name) 
+    {
+        return DatabaseService.getDBServiceInstance().deleteEmployee(name);
+    }
+    
     
     public static void main(String[] args) 
     {
