@@ -1,33 +1,25 @@
 package EmployeePayrollSystem;
 
+import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.sql.Date;
+import java.sql.SQLData;
+
 
 public class EmployeePayrollService 
 {
-    private List<Employee> employeeList;
-    
-    public enum IOService{CONSOLE_IO, FILE_IO, DB_IO, REST_IO};
-    
+	private List<Employee> employeeList;
+
+    public enum IOService {CONSOLE_IO, FILE_IO, DB_IO, REST_IO}
+
     public EmployeePayrollService() 
     {
         this.employeeList = new ArrayList<Employee>();
     }
-    
-    public void writeEmployeePayrollData() 
-    {
-        System.out.println("Writing employee data \n"+ employeeList);
-    }
-    
-    public void writeEmployeePayrollData(EmployeePayrollService.IOService ioservice) 
-    {
-        if(ioservice==IOService.CONSOLE_IO)
-            System.out.println("Writing employee data \n"+ employeeList);
-        else if(ioservice==IOService.FILE_IO)
-            new EmployeePayrollFileIOService().writeData(employeeList);
-    }
-    
+
     public void readEmployeePayrollData(Scanner consoleInputReader) 
     {
     	
@@ -45,26 +37,41 @@ public class EmployeePayrollService
         String address = consoleInputReader.next();
         System.out.println("Enter employee phNumber");
         String phNumber = consoleInputReader.next();
-        System.out.println("Enter Employee start_date");
-        String startDate = consoleInputReader.next();
-        employeeList.add(new Employee(id, deptID,companyID,name,gender,address,phNumber,startDate));
+        employeeList.add(new Employee(id, deptID,companyID,name,gender,address,phNumber,LocalDate.now()));
     }
     
+    public void writeEmployeePayrollData() 
+    {
+        System.out.println("Writing employee data \n" + employeeList);
+    }
+
+    public void writeEmployeePayrollData(EmployeePayrollService.IOService ioservice) 
+    {
+        if (ioservice == IOService.CONSOLE_IO)
+            System.out.println("Writing employee data \n" + employeeList);
+        else if (ioservice == IOService.FILE_IO)
+            new EmployeePayrollFileIOService().writeData(employeeList);
+
+    }
+
+
     public void printData(IOService ioService) 
     {
-        if(ioService.equals(IOService.FILE_IO)) 
+        if (ioService.equals(IOService.FILE_IO)) 
         {
             new EmployeePayrollFileIOService().printData();
         }
     }
+
     public long countEntries(IOService ioService) 
     {
-        if(ioService.equals(IOService.FILE_IO)) 
+        if (ioService.equals(IOService.FILE_IO)) 
         {
             return new EmployeePayrollFileIOService().countEntries();
         }
         return 0;
     }
+
     public List<Employee> readEmployeePayrollData(IOService ioservice, String... name) 
     {
         if (ioservice.equals(IOService.FILE_IO))
@@ -80,14 +87,20 @@ public class EmployeePayrollService
         DatabaseService.getDBServiceInstance().updatePayroll(name, basicPay);
     }
 
-
-    public boolean compareUpdate(String name)
+    public List<Employee> readEmployeeJoinedInRange(LocalDate startDate,LocalDate endDate) 
+    {
+    	System.out.println(startDate);
+    	System.out.println(endDate);
+        return DatabaseService.getDBServiceInstance().readEmployedJoinedRange(Date.valueOf(startDate),Date.valueOf(endDate));
+    }
+    
+    public boolean compareUpdateSync(String name) 
     {
         List<Employee> employeeList = DatabaseService.getDBServiceInstance().employeeList;
         return employeeList.get(0).getPayroll().toString().equals(readEmployeePayrollData(IOService.DB_IO, name).get(0).getPayroll().toString());
     }
     
-    public static void main(String[] args)
+    public static void main(String[] args) 
     {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         Scanner consoleInputReader = new Scanner(System.in);
