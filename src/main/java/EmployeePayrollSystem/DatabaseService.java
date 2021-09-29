@@ -1,22 +1,30 @@
 package EmployeePayrollSystem;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.mysql.jdbc.PreparedStatement;
 
 public class DatabaseService 
 {
        
 	private PreparedStatement preparedStatement;
     private PreparedStatement updatePayrollStatement;
-    private static DatabaseService databaseService;
+    private static DatabaseService employeePayrollDBService;
+    private PreparedStatement employeeJoinedDate;
     List<Employee> employeeList;
-    
+
+    private DatabaseService() 
+    {
+
+    }
+
+    public static DatabaseService getDBServiceInstance() 
+    {
+        if (employeePayrollDBService == null)
+            employeePayrollDBService = new DatabaseService();
+        return employeePayrollDBService;
+    }
+
     public static Connection getConnection() throws SQLException 
     {
 		
@@ -32,24 +40,10 @@ public class DatabaseService
 		return connection;
 	}
 
-    private DatabaseService() 
+
+    public List<Employee> readEmployeeDataFromDB(String name)
     {
-
-    }
-
-    public static DatabaseService getDBServiceInstance() 
-    {
-        if (databaseService == null)
-            databaseService = new DatabaseService();
-        
-        return databaseService;
-    }
-
-    
-
-    public List<Employee> readEmployeeDataFromDB(String name) 
-    {
-        if (preparedStatement == null) 
+        if (preparedStatement == null)
         {
             this.preparedStatementToReadEmployeeData();
         }
@@ -57,18 +51,18 @@ public class DatabaseService
         {
             preparedStatement.setString(1, name);
             ResultSet resultSet = preparedStatement.executeQuery();
-            employeeList = this.getEmployeeDataList(resultSet);
-        } 
-        catch (Exception e) 
+            employeeList = this.getCompleteEmployeeDataList(resultSet);
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
         }
         return employeeList;
     }
 
-    private List<Employee> getEmployeeDataList(ResultSet resultSet)
+    private List<Employee> getCompleteEmployeeDataList(ResultSet resultSet)
     {
-        employeeList = new ArrayList<>();
+    	employeeList = new ArrayList<>();
         try 
         {
             while (resultSet.next()) 
@@ -80,7 +74,7 @@ public class DatabaseService
                 		resultSet.getString("gender"), 
                 		resultSet.getString("address"), 
                 		resultSet.getString("phoneNumber"), 
-                		resultSet.getString("startDate") ,
+                		resultSet.getDate("startDate").toLocalDate() ,
                 		new Payroll(resultSet.getInt("employeeID"), 
                 				resultSet.getString("basicPay"), 
                 				resultSet.getString("deduction"), 
@@ -99,46 +93,110 @@ public class DatabaseService
         return employeeList;
     }
 
-    private void preparedStatementToReadEmployeeData() 
+    private List<Employee> getEmployeeDataList(ResultSet resultSet) 
     {
-        try (Connection connection = this.getConnection()) 
+    	employeeList = new ArrayList<>();
+        try 
         {
-            String query = "select * from Employee e, Payroll p,Company c where e.employeeID=p.employeeID and e.companyID=c.companyID and employeeName= ?";
-            preparedStatement = (PreparedStatement) connection.prepareStatement(query);
-        } catch (Exception e) 
-        {
-            throw new DatabaseException(e.getMessage());
-        }
-    }
-
-    private void preparedStatementToUpdatePayroll() 
-    {
-        try (Connection connection = this.getConnection()) 
-        {
-            String updateQuery = "update Payroll set basicPay=? where employeeID in (select employeeID from Employee where employeeName=?)";
-            updatePayrollStatement = (PreparedStatement) connection.prepareStatement(updateQuery);
+            while (resultSet.next()) 
+            {
+            	employeeList.add(new Employee(
+            			resultSet.getInt("employeeID"), 
+            			resultSet.getInt("departmentID"), 
+            			resultSet.getInt("customerID"), 
+            			resultSet.getString("employeeName"), 
+            			resultSet.getString("gender"), 
+            			resultSet.getString("address"),
+            			resultSet.getString("phoneNumber"),
+            			resultSet.getDate("startDate").toLocalDate()));
+            }
         } 
         catch (Exception e) 
         {
             throw new DatabaseException(e.getMessage());
         }
+        return employeeList;
     }
 
-    public void updatePayroll(String name, String basicPay) 
+
+    private void preparedStatementToReadEmployeeData()
+    {
+        try (Connection connection = this.getConnection()) 
+        {
+            String query = "select * from Employee e, Payroll p,Company c where e.employeeID=p.employeeID and e.companyID=c.companyID and employeeName= ?";
+            preparedStatement = connection.prepareStatement(query);
+        } 
+        catch (Exception e)
+        {
+            throw new DatabaseException(e.getMessage());
+        }
+    }
+
+    private void preparedStatementToUpdatePayroll()
+    {
+        try 
+        {
+            Connection connection = this.getConnection();
+            String updateQuery = "update Payroll set basicPay=? where employeeID in (select employeeID from employee where employeeName=?)";
+            updatePayrollStatement = connection.prepareStatement(updateQuery);
+        } 
+        catch (Exception e)
+        {
+            throw new DatabaseException(e.getMessage());
+        }
+    }
+
+    private void preparedStatementToRetriveEmployeeInRange()
+    {
+        try 
+        {
+            Connection connection = this.getConnection();
+            String query = "select * from Employee where startDate between ? and ?";
+            employeeJoinedDate = connection.prepareStatement(query);
+            
+        } catch (Exception e) 
+        {
+        	
+            throw new DatabaseException(e.getMessage());
+        }
+    }
+
+    public void updatePayroll(String name, String basicPay)
     {
         if (updatePayrollStatement == null)
         {
             this.preparedStatementToUpdatePayroll();
         }
-        try (Connection connection = this.getConnection()) 
+        try
         {
             updatePayrollStatement.setString(1, basicPay);
             updatePayrollStatement.setString(2, name);
             updatePayrollStatement.executeUpdate();
         } 
-        catch (Exception e) 
+        catch (Exception e)
         {
 
+            throw new DatabaseException(e.getMessage());
+        }
+    }
+
+
+    public List<Employee> readEmployedJoinedRange(Date startDate, Date endDate) 
+    {
+        if (employeeJoinedDate == null) 
+        {
+            this.preparedStatementToRetriveEmployeeInRange();
+        }
+        try 
+        {
+            employeeJoinedDate.setDate(1, startDate);
+            employeeJoinedDate.setDate(2, endDate);
+            ResultSet resultSet = employeeJoinedDate.executeQuery();
+            System.out.println(resultSet+"hi");
+            return this.getEmployeeDataList(resultSet);
+        } 
+        catch (Exception e) 
+        {
             throw new DatabaseException(e.getMessage());
         }
     }
