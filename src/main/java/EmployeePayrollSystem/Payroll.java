@@ -3,15 +3,15 @@ package EmployeePayrollSystem;
 public class Payroll 
 {
 	public int employeeID;
-	public String basicPay;
-	public String deduction;
-	public String taxablePay;
-	public String incomeTax;
-	public String netPay;
+	public int basicPay;
+	public int deduction;
+	public int taxablePay;
+	public int incomeTax;
+	public int netPay;
 	
 	
-	public Payroll(int employeeID, String basicPay, String deduction, String taxablePay, String incomeTax,
-			String netPay) 
+	public Payroll(int employeeID, int basicPay, int deduction, int taxablePay, int incomeTax,
+			int netPay) 
 	{
 		super();
 		this.employeeID = employeeID;
@@ -26,23 +26,23 @@ public class Payroll
 	{
 		return employeeID;
 	}
-	public String getBasicPay()
+	public int getBasicPay()
 	{
 		return basicPay;
 	}
-	public String getDeduction()
+	public int getDeduction()
 	{
 		return deduction;
 	}
-	public String getTaxablePay() 
+	public int getTaxablePay() 
 	{
 		return taxablePay;
 	}
-	public String getIncomeTax()
+	public int getIncomeTax()
 	{
 		return incomeTax;
 	}
-	public String getNetPay()
+	public int getNetPay()
 	{
 		return netPay;
 	}
@@ -50,23 +50,23 @@ public class Payroll
 	{
 		this.employeeID = employeeID;
 	}
-	public void setBasicPay(String basicPay) 
+	public void setBasicPay(int basicPay) 
 	{
 		this.basicPay = basicPay;
 	}
-	public void setDeduction(String deduction)
+	public void setDeduction(int deduction)
 	{
 		this.deduction = deduction;
 	}
-	public void setTaxablePay(String taxablePay) 
+	public void setTaxablePay(int taxablePay) 
 	{
 		this.taxablePay = taxablePay;
 	}
-	public void setIncomeTax(String incomeTax) 
+	public void setIncomeTax(int incomeTax) 
 	{
 		this.incomeTax = incomeTax;
 	}
-	public void setNetPay(String netPay) 
+	public void setNetPay(int netPay) 
 	{
 		this.netPay = netPay;
 	}
